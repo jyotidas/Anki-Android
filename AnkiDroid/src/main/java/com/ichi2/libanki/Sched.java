@@ -64,6 +64,7 @@ public class Sched {
     private String mName = "std";
     private boolean mHaveCustomStudy = true;
     private boolean mSpreadRev = true;
+    private boolean mLoadBalancer = false;
     private boolean mBurySiblingsOnAnswer = true;
 
     private Collection mCol;
