@@ -127,6 +127,14 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
     private ListPreference newSpread;
     private SeekBarPreference dayOffset;
 
+    // load balancer options
+    private CheckBoxPreference loadBalancerEnable;
+    private NumberRangePreference loadBalancerPercentBefore;
+    private NumberRangePreference loadBalancerPercentAfter;
+    private NumberRangePreference loadBalancerBeforeMax;
+    private NumberRangePreference loadBalancerBeforeMin;
+    private NumberRangePreference loadBalancerAfterMax;
+    private NumberRangePreference loadBalancerAfterMin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +187,13 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
             advanced.removePreference(workarounds);     // group itself can be hidden for API 16
         }
 
+        loadBalancerEnable = (CheckBoxPreference) getPreferenceScreen().findPreference("loadBalancerEnable");
+        loadBalancerPercentBefore = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerPercentBefore");
+        loadBalancerPercentAfter = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerPercentAfter");
+        loadBalancerBeforeMax = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerBeforeMax");
+        loadBalancerBeforeMin = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerBeforeMin");
+        loadBalancerAfterMax = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerAfterMax");
+        loadBalancerAfterMin = (NumberRangePreference) getPreferenceScreen().findPreference("loadBalancerAfterMin");
 
         initializeLanguageDialog();
         
@@ -246,6 +261,13 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
                 showProgress.setChecked(conf.getBoolean("dueCounts"));
                 newSpread.setValueIndex(conf.getInt("newSpread"));
                 useCurrent.setValueIndex(conf.optBoolean("addToCur", true) ? 0 : 1);
+                
+                loadBalancerPercentBefore.setValue((int) (conf.getDouble("LBPercentBefore") * 100));
+                loadBalancerPercentAfter.setValue((int) (conf.getDouble("LBPercentAfter") * 100));
+                loadBalancerBeforeMax.setValue(conf.getInt("LBMaxBefore"));
+                loadBalancerBeforeMin.setValue(conf.getInt("LBMinBefore"));
+                loadBalancerAfterMax.setValue(conf.getInt("LBMaxAfter"));
+                loadBalancerAfterMin.setValue(conf.getInt("LBMinAfter"));
             } catch (JSONException | NumberFormatException e) {
                 throw new RuntimeException();
             }
@@ -558,6 +580,34 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
                     break;
                 case "minimumCardsDueForNotification":
                     updateNotificationPreference();
+                    break;
+                case "loadBalancerEnable":
+                    mCol.getSched().setLoadBalancer(loadBalancerEnable.isChecked());
+                    mCol.setMod();
+                    break;
+                case "loadBalancerPercentBefore":
+                    mCol.getConf().put("LBPercentBefore", loadBalancerPercentBefore.getValue() / 100.0);
+                    mCol.setMod();
+                    break;
+                case "loadBalancerPercentAfter":
+                    mCol.getConf().put("LBPercentAfter", loadBalancerPercentAfter.getValue() / 100.0);
+                    mCol.setMod();
+                    break;
+                case "loadBalancerBeforeMax":
+                    mCol.getConf().put("LBMaxBefore", loadBalancerBeforeMax.getValue());
+                    mCol.setMod();
+                    break;
+                case "loadBalancerBeforeMin":
+                    mCol.getConf().put("LBMinBefore", loadBalancerBeforeMin.getValue());
+                    mCol.setMod();
+                    break;
+                case "loadBalancerAfterMax":
+                    mCol.getConf().put("LBMaxAfter", loadBalancerAfterMax.getValue());
+                    mCol.setMod();
+                    break;
+                case "loadBalancerAfterMin":
+                    mCol.getConf().put("LBMinAfter", loadBalancerAfterMin.getValue());
+                    mCol.setMod();
                     break;
                 case "reportErrorMode":
                     String value = sharedPreferences.getString("reportErrorMode", "");
