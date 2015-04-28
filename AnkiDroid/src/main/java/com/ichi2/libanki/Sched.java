@@ -27,6 +27,7 @@ import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.util.Pair;
 
 import com.ichi2.anki.AnkiDroidApp;
